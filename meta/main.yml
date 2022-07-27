@@ -1,0 +1,24 @@
+---
+galaxy_info:
+  author: poppen
+  role_name: iptables_legacy
+  description: Enable legacy iptables
+
+  license: BSD-3-Clause
+
+  min_ansible_version: '2.9'
+
+  platforms:
+    - name: Ubuntu
+      versions:
+        - jammy
+
+  galaxy_tags:
+    - system
+    - security
+    - iptables
+
+collections:
+  - community.general
+
+dependencies: []

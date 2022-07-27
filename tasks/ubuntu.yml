@@ -1,0 +1,32 @@
+---
+- name: Install iptables packages
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  loop:
+    - iptables
+    - iptables-persistent
+    - netfilter-persistent
+
+- name: Switch to iptables-legacies
+  community.general.alternatives:
+    name: "{{ item }}"
+    path: "/usr/sbin/{{ item }}-legacy"
+  loop:
+    - iptables
+    - ip6tables
+
+- name: Copy iptables rules in place
+  ansible.builtin.copy:
+    content: "{{ iptables_legacy_rules[item] }}"
+    dest: "/etc/iptables/rules.{{ item  }}"
+    owner: root
+    group: root
+    mode: 0644
+  loop:
+    - v4
+    - v6
+  when: iptables_legacy_rules[item] | length > 0
+  notify:
+    - reload saved iptables rules

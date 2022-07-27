@@ -1,0 +1,9 @@
+---
+- name: "Get stat of /etc/alternatives/{{ item }}"
+  ansible.builtin.stat:
+    path: "/etc/alternatives/{{ item }}"
+  register: st
+
+- name: "Ensure /etc/alternatives/{{ item }} is link of /usr/sbin/{{ item }}-legacy"
+  ansible.builtin.assert:
+    that: st.stat.lnk_target == '/usr/sbin/{{ item }}-legacy'

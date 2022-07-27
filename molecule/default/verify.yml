@@ -1,0 +1,33 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  gather_facts: false
+
+  tasks:
+    - include_tasks: verify_links.yml
+      loop:
+        - iptables
+        - ip6tables
+
+    - name: Run iptables -S
+      ansible.builtin.command: iptables -S
+      changed_when: false
+      register: result
+
+    - name: Ensure all iptables rules are included in iptables -S output
+      ansible.builtin.assert:
+        that:
+          - "'{{ item }}' in {{ result.stdout_lines }}"
+      loop: "{{ iptables_legacy_rules['v4'].splitlines() }}"
+
+    - name: Run ip6tables -S
+      ansible.builtin.command: ip6tables -S
+      changed_when: false
+      register: result
+
+    - name: Ensure all ip6tables rules are included in iptables -S output
+      ansible.builtin.assert:
+        that:
+          - "'{{ item }}' in {{ result.stdout_lines }}"
+      loop: "{{ iptables_legacy_rules['v6'].splitlines() }}"
