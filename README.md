@@ -1,5 +1,7 @@
 # Ansible Role: iptables_legacy
 
+[![CI](https://github.com/poppen/ansible-role-iptables-legacy/actions/workflows/ci.yml/badge.svg)](https://github.com/poppen/ansible-role-iptables-legacy/actions/workflows/ci.yml)
+
 An ansible Role that installs and enables iptables-legacy on Linux.
 
 I created this role because Docker requires iptables-legacy enabled.
