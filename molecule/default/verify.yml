@@ -19,7 +19,7 @@
       ansible.builtin.assert:
         that:
           - "'{{ item }}' in {{ result.stdout_lines }}"
-      loop: "{{ iptables_legacy_rules['v4'].splitlines() }}"
+      loop: "{{ iptables_list_rules['v4'].splitlines() }}"
 
     - name: Run ip6tables -S
       ansible.builtin.command: ip6tables -S
@@ -30,4 +30,4 @@
       ansible.builtin.assert:
         that:
           - "'{{ item }}' in {{ result.stdout_lines }}"
-      loop: "{{ iptables_legacy_rules['v6'].splitlines() }}"
+      loop: "{{ iptables_list_rules['v6'].splitlines() }}"

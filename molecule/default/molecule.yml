@@ -13,7 +13,7 @@ platforms:
 provisioner:
   name: ansible
   connection_options:
-    iptables_legacy_rules:
+    iptables_list_rules:
       v4: |
         -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
         -A INPUT -i lo -j ACCEPT
