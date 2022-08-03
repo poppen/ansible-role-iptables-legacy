@@ -20,13 +20,19 @@
           - "'{{ item }}' in {{ result.stdout_lines }}"
       loop: "{{ iptables_list_rules['v4'].splitlines() }}"
 
+    - name: Check IPv6 enable
+      ansible.builtin.set_fact:
+        no_ipv6: "{{ lookup('ansible.builtin.env', 'NO_IPV6', default='0') }}"
+
     - name: Run ip6tables -S
       ansible.builtin.command: ip6tables -S
       changed_when: false
       register: result
+      when: no_ipv6 == '0'
 
     - name: Ensure all ip6tables rules are included in iptables -S output
       ansible.builtin.assert:
         that:
           - "'{{ item }}' in {{ result.stdout_lines }}"
+      when: no_ipv6 == '0'
       loop: "{{ iptables_list_rules['v6'].splitlines() }}"
