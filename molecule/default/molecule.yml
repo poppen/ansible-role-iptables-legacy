@@ -4,16 +4,18 @@ dependency:
   options:
     requirements-file: collections.yml
 driver:
-  name: vagrant
+  name: docker
 platforms:
   - name: instance
-    box: bento/ubuntu-22.04
-    memory: 512
-    cpu: 1
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2204}-ansible:latest"
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    pre_build_image: true
 provisioner:
   name: ansible
   connection_options:
-    iptables_legacy_rules:
+    iptables_list_rules:
       v4: |
         -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
         -A INPUT -i lo -j ACCEPT

@@ -6,4 +6,4 @@
 
 - name: "Ensure /etc/alternatives/{{ item }} is link of /usr/sbin/{{ item }}-legacy"
   ansible.builtin.assert:
-    that: st.stat.lnk_target == '/usr/sbin/{{ item }}-legacy'
+    that: st.stat.lnk_target == "/usr/sbin/{{ item }}-legacy"

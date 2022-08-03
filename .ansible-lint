@@ -1,0 +1,4 @@
+---
+exclude_paths:
+  - .venv/
+  - molecule/default/verify_links.yml

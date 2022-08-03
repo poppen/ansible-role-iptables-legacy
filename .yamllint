@@ -1,0 +1,14 @@
+---
+extends: default
+
+ignore: |
+  .venv/
+
+rules:
+  line-length:
+    max: 200
+    level: warning
+
+  truthy:
+    allowed-values: ['true', 'false']
+    check-keys: false
