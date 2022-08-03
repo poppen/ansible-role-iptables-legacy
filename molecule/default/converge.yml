@@ -1,7 +1,6 @@
 ---
 - name: Converge
   hosts: all
-  become: true
   tasks:
     - name: "Include poppen.iptables_legacy"
       ansible.builtin.include_role:
