@@ -8,7 +8,8 @@ I created this role because Docker requires iptables-legacy enabled.
 
 ## Requirements
 
-Ubuntu 22.04 or above. Under Debian 10 or above, it should work but hasn't been tested (PRs are always welcome).
+- Ubuntu 22.04 or above
+- Debian 10 or above
 
 ## Role Variable
 
@@ -72,6 +73,10 @@ iptables_legacy_rules:
 ## License
 
 BSD-3-Clause
+
+## Future Plan
+
+- RedHat family support (PRs are always welcome).
 
 ## Author Information
 
