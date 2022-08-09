@@ -16,6 +16,8 @@ jobs:
       matrix:
         distro:
           - ubuntu2204
+          - debian11
+          - debian10
 
     steps:
       - name: Check out the codebase.
