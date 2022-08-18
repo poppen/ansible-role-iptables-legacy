@@ -1,2 +1,4 @@
 ---
-- include_tasks: "{{ ansible_facts['os_family'] }}.yml"
+- include_tasks: Debian.yml
+  when: (ansible_facts['distribution'] == 'Debian' and ansible_facts['distribution_major_version'] is version('10', '>=')) or
+        (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_version'] is version('22.04', '>='))
