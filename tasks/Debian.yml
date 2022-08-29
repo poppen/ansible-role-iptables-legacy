@@ -19,7 +19,7 @@
 - name: Copy iptables rules in place
   ansible.builtin.copy:
     content: "{{ iptables_legacy_rules[item] }}"
-    dest: "/etc/iptables/rules.{{ item  }}"
+    dest: "/etc/iptables/rules.{{ item }}"
     owner: root
     group: root
     mode: 0644
@@ -28,4 +28,4 @@
     - v6
   when: iptables_legacy_rules[item] | length > 0
   notify:
-    - reload saved iptables rules
+    - Reload saved iptables rules

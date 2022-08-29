@@ -1,4 +1,4 @@
 ---
-- name: reload saved iptables rules
+- name: Reload saved iptables rules
   ansible.builtin.shell: |
     /etc/init.d/netfilter-persistent reload
