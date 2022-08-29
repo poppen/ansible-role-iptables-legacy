@@ -4,5 +4,5 @@
   "ignorePresets": [":prHourlyLimit2"],
   "dependencyDashboard": false,
   "automerge": true,
-  "branchConcurrentLimit": 0
+  "prConcurrentLimit": 5
 }
