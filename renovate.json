@@ -1,8 +1,11 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:base"],
+  "extends": [
+    "config:base",
+    ":timezone(Asia/Tokyo)",
+    "schedule:weekends",
+    "group:all"
+  ],
   "ignorePresets": [":prHourlyLimit2"],
-  "dependencyDashboard": false,
-  "automerge": true,
-  "prConcurrentLimit": 5
+  "automerge": true
 }
