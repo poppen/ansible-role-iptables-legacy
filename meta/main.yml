@@ -1,5 +1,6 @@
 ---
 galaxy_info:
+  standalone: true
   author: poppen
   role_name: iptables_legacy
   description: Enable legacy iptables
