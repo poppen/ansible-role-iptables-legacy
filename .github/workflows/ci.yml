@@ -20,8 +20,6 @@ jobs:
     steps:
       - name: Check out the codebase.
         uses: actions/checkout@v4
-        with:
-          path: "${{ github.repository }}"
 
       - name: Set up Python 3.
         uses: actions/setup-python@v5
