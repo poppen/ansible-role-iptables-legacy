@@ -52,7 +52,9 @@ jobs:
           python3 -m pip install -r requirements.txt
 
       - name: Run Molecule tests.
-        run: molecule test
+        uses: gofrolist/molecule-action@v2
+        with:
+          molecule_command: test
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
