@@ -8,7 +8,7 @@ on:
 
 defaults:
   run:
-    working-directory: 'poppen.iptables_legacy'
+    working-directory: "poppen.iptables_legacy"
 
 jobs:
   actionlint:
@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          path: 'poppen.iptables_legacy'
+          path: "poppen.iptables_legacy"
       - name: Download actionlint
         id: get_actionlint
         run: bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
@@ -39,12 +39,12 @@ jobs:
       - name: Check out the codebase.
         uses: actions/checkout@v4
         with:
-          path: 'poppen.iptables_legacy'
+          path: "poppen.iptables_legacy"
 
       - name: Set up Python 3.
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: "3.x"
 
       - name: Install test dependencies.
         run: |
@@ -53,7 +53,7 @@ jobs:
       - name: Run Molecule tests.
         run: molecule test
         env:
-          PY_COLORS: '1'
-          ANSIBLE_FORCE_COLOR: '1'
+          PY_COLORS: "1"
+          ANSIBLE_FORCE_COLOR: "1"
           MOLECULE_DISTRO: ${{ matrix.distro }}
-          NO_IPV6: '1'
+          NO_IPV6: "1"
