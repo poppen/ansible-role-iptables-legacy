@@ -2,3 +2,4 @@
 - name: Reload saved iptables rules
   ansible.builtin.shell: |
     /etc/init.d/netfilter-persistent reload
+  changed_when: false
