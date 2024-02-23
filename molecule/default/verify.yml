@@ -18,7 +18,7 @@
     - name: Ensure all iptables rules are included in iptables -S output
       ansible.builtin.assert:
         that:
-          - "'{{ item }}' in {{ result.stdout_lines }}"
+          - "{{ item in result.stdout_lines }}"
       loop: "{{ iptables_list_rules['v4'].splitlines() }}"
 
     - name: Check IPv6 enable
@@ -34,6 +34,6 @@
     - name: Ensure all ip6tables rules are included in iptables -S output
       ansible.builtin.assert:
         that:
-          - "'{{ item }}' in {{ result.stdout_lines }}"
+          - "{{ item in result.stdout_lines }}"
       when: no_ipv6 == '0'
       loop: "{{ iptables_list_rules['v6'].splitlines() }}"
