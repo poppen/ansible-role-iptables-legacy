@@ -59,6 +59,17 @@ iptables_legacy_rules:
     COMMIT
 ```
 
+## Applying rules
+
+Changing `iptables_legacy_rules` triggers a handler that runs
+`/etc/init.d/netfilter-persistent reload`. The rules files declare `*filter` only, so
+`iptables-restore` replaces that table and leaves `nat` / `mangle` / `raw` alone.
+
+On a host running Docker this still removes `DOCKER-USER` and the other chains Docker
+creates when its daemon starts and never rebuilds on its own. The role therefore restarts
+Docker after reloading rules, which costs running containers a brief interruption. The
+restart only happens when `/usr/bin/dockerd` is present.
+
 ## Dependencies
 
 - community.general

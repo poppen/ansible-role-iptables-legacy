@@ -16,6 +16,11 @@
     - iptables
     - ip6tables
 
+- name: Check whether dockerd is installed
+  ansible.builtin.stat:
+    path: /usr/bin/dockerd
+  register: iptables_legacy_dockerd
+
 - name: Copy iptables rules in place
   ansible.builtin.copy:
     content: "{{ iptables_legacy_rules[item] }}"
