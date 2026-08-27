@@ -15,5 +15,5 @@
   ansible.builtin.service:
     name: docker
     state: restarted
-  when: iptables_legacy_dockerd.stat.exists
+  when: iptables_legacy_dockerd.stat.exists | default(false)
   listen: Reload saved iptables rules
