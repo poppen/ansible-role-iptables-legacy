@@ -1,6 +1,19 @@
 ---
+# `netfilter-persistent flush` is deliberately not used here: it empties every
+# table (nat / mangle / raw included), while reload only restores the tables
+# declared in /etc/iptables/rules.{v4,v6}. `iptables-restore` is invoked without
+# --noflush, so it already replaces the tables the rules files declare.
 - name: Reload saved iptables rules
-  ansible.builtin.shell: |
-    /etc/init.d/netfilter-persistent flush
-    /etc/init.d/netfilter-persistent reload
+  ansible.builtin.command: /etc/init.d/netfilter-persistent reload
   changed_when: false
+
+# Reloading *filter still wipes DOCKER-USER and the other chains Docker creates
+# at daemon start. Docker never rebuilds them on its own, so restart it to put
+# them back. Costs containers a brief interruption, but leaving them broken
+# until the next dockerd restart is worse.
+- name: Restart docker
+  ansible.builtin.service:
+    name: docker
+    state: restarted
+  when: iptables_legacy_dockerd.stat.exists | default(false)
+  listen: Reload saved iptables rules

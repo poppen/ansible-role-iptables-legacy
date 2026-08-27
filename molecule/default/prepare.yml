@@ -1,0 +1,25 @@
+---
+- name: Prepare
+  hosts: all
+
+  tasks:
+    - name: Update apt cache.
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 600
+
+    - name: Install iptables so that sentinel chains can be created
+      ansible.builtin.apt:
+        name: iptables
+        state: present
+
+    # These chains stand in for the chains Docker creates at daemon start
+    # (DOCKER, DOCKER-USER, DOCKER-ISOLATION-STAGE-*) and never recreates.
+    # The role must not destroy tables it does not manage.
+    - name: Create sentinel chains in every table the role must not destroy
+      ansible.builtin.command: "/usr/sbin/iptables-legacy -t {{ item }} -N {{ molecule_sentinel_chain }}"
+      changed_when: true
+      loop:
+        - nat
+        - mangle
+        - filter

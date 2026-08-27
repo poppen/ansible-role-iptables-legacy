@@ -1,0 +1,43 @@
+---
+# Regression test for #54: shrinking iptables_legacy_rules must remove the
+# dropped rules from the live tables. This is what the handler's flush was
+# originally added for; the test proves `netfilter-persistent reload` alone
+# already replaces the tables declared in the rules files.
+- name: Side effect
+  hosts: all
+  gather_facts: true
+
+  tasks:
+    - name: Check IPv6 enable
+      ansible.builtin.set_fact:
+        no_ipv6: "{{ lookup('ansible.builtin.env', 'NO_IPV6', default='0') }}"
+
+    - name: Run iptables -S
+      ansible.builtin.command: iptables -S
+      changed_when: false
+      register: v4_before
+
+    - name: Ensure the default rules were applied before they are reduced
+      ansible.builtin.assert:
+        that:
+          - item in v4_before.stdout_lines
+      loop: "{{ iptables_list_rules['v4'].splitlines() }}"
+
+    - name: Run ip6tables -S
+      ansible.builtin.command: ip6tables -S
+      changed_when: false
+      register: v6_before
+      when: no_ipv6 == '0'
+
+    - name: Ensure the default ip6tables rules were applied before they are reduced
+      ansible.builtin.assert:
+        that:
+          - item in v6_before.stdout_lines
+      when: no_ipv6 == '0'
+      loop: "{{ iptables_list_rules['v6'].splitlines() }}"
+
+    - name: Re-apply the role with a reduced rule set
+      ansible.builtin.include_role:
+        name: poppen.iptables_legacy
+      vars:
+        iptables_legacy_rules: "{{ iptables_legacy_rules_reduced }}"

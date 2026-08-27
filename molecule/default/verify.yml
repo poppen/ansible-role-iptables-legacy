@@ -1,4 +1,5 @@
 ---
+# Runs after side_effect, so the expected state is the *reduced* rule set.
 - name: Verify
   hosts: all
   gather_facts: false
@@ -10,16 +11,55 @@
         - iptables
         - ip6tables
 
-    - name: Run iptables -S
-      ansible.builtin.command: iptables -S
+    - name: Run iptables -S in every table
+      ansible.builtin.command: "iptables -t {{ item }} -S"
       changed_when: false
-      register: result
+      register: tables
+      loop:
+        - nat
+        - mangle
+        - filter
 
-    - name: Ensure all iptables rules are included in iptables -S output
+    # The role manages only the filter table, so tables it does not declare
+    # must survive a rule reload untouched. Docker's nat rules live here.
+    - name: Ensure sentinel chains survive in tables the role does not manage
       ansible.builtin.assert:
         that:
-          - "{{ item in result.stdout_lines }}"
-      loop: "{{ iptables_list_rules['v4'].splitlines() }}"
+          - "'-N ' ~ molecule_sentinel_chain in item.stdout_lines"
+        fail_msg: >-
+          Chain {{ molecule_sentinel_chain }} was destroyed in the
+          {{ item.item }} table. Reloading rules must not touch it.
+      loop: "{{ tables.results | selectattr('item', 'in', ['nat', 'mangle']) }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    # Known limitation: the rules files declare *filter, so iptables-restore
+    # replaces that table wholesale. On a Docker host this is what takes out
+    # DOCKER-USER, which is why the handler restarts dockerd afterwards.
+    - name: Ensure the sentinel chain in the managed filter table is replaced
+      ansible.builtin.assert:
+        that:
+          - "'-N ' ~ molecule_sentinel_chain not in item.stdout_lines"
+      loop: "{{ tables.results | selectattr('item', 'equalto', 'filter') }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Ensure all reduced iptables rules are included in iptables -S output
+      ansible.builtin.assert:
+        that:
+          - item in (tables.results | selectattr('item', 'equalto', 'filter') | first).stdout_lines
+      loop: "{{ iptables_list_rules_reduced['v4'].splitlines() }}"
+
+    - name: Ensure rules dropped from the rule set are gone from iptables -S output
+      ansible.builtin.assert:
+        that:
+          - item not in (tables.results | selectattr('item', 'equalto', 'filter') | first).stdout_lines
+        fail_msg: >-
+          Rule is still active after it was removed from iptables_legacy_rules:
+          {{ item }}
+      loop: >-
+        {{ iptables_list_rules['v4'].splitlines()
+           | difference(iptables_list_rules_reduced['v4'].splitlines()) }}
 
     - name: Check IPv6 enable
       ansible.builtin.set_fact:
@@ -31,9 +71,18 @@
       register: result
       when: no_ipv6 == '0'
 
-    - name: Ensure all ip6tables rules are included in iptables -S output
+    - name: Ensure all reduced ip6tables rules are included in ip6tables -S output
       ansible.builtin.assert:
         that:
-          - "{{ item in result.stdout_lines }}"
+          - item in result.stdout_lines
       when: no_ipv6 == '0'
-      loop: "{{ iptables_list_rules['v6'].splitlines() }}"
+      loop: "{{ iptables_list_rules_reduced['v6'].splitlines() }}"
+
+    - name: Ensure rules dropped from the rule set are gone from ip6tables -S output
+      ansible.builtin.assert:
+        that:
+          - item not in result.stdout_lines
+      when: no_ipv6 == '0'
+      loop: >-
+        {{ iptables_list_rules['v6'].splitlines()
+           | difference(iptables_list_rules_reduced['v6'].splitlines()) }}
