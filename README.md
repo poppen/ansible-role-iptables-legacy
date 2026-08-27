@@ -8,8 +8,16 @@ I created this role because Docker requires iptables-legacy enabled.
 
 ## Requirements
 
-- Ubuntu 22.04 or above
+- Ubuntu 20.04 or above
 - Debian 11 or above
+
+On Ubuntu 20.04 (focal) the `iptables` alternative already points at
+`iptables-legacy` by default, so the only thing this role changes there is pinning that
+alternative from auto to manual mode. Installing the packages and managing
+`/etc/iptables/rules.{v4,v6}` work the same as on the other supported releases.
+
+Note that focal ships Python 3.8, and ansible-core 2.20 raised the minimum target version
+to 3.9. Managing a focal host needs ansible-core 2.19 or older (the `ansible` 12 series).
 
 ## Role Variable
 
