@@ -9,7 +9,7 @@ I created this role because Docker requires iptables-legacy enabled.
 ## Requirements
 
 - Ubuntu 20.04 or above
-- Debian 10 or above
+- Debian 11 or above
 
 On Ubuntu 20.04 (focal) the `iptables` alternative already points at
 `iptables-legacy` by default, so the only thing this role changes there is pinning that

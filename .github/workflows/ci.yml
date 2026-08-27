@@ -40,7 +40,6 @@ jobs:
         include:
           - distro: ubuntu2204
           - distro: debian11
-          - distro: debian10
           # Ubuntu 20.04 ships Python 3.8 and ansible-core 2.20 raised the
           # minimum target version to 3.9, so pin this leg to the last release
           # series that can still manage focal.
@@ -56,7 +55,10 @@ jobs:
       - name: Set up Python 3.
         uses: actions/setup-python@v5
         with:
-          python-version: "3.x"
+          # ansible_compat refuses ansible-core < 2.20 on Python 3.14, which is
+          # what "3.x" resolves to, so the pinned focal leg needs an older
+          # controller Python as well.
+          python-version: "${{ matrix.distro == 'ubuntu2004' && '3.12' || '3.x' }}"
 
       - name: Install test dependencies.
         run: |
