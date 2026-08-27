@@ -9,7 +9,7 @@ I created this role because Docker requires iptables-legacy enabled.
 ## Requirements
 
 - Ubuntu 22.04 or above
-- Debian 10 or above
+- Debian 11 or above
 
 ## Role Variable
 
